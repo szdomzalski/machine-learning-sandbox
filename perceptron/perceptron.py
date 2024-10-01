@@ -29,14 +29,14 @@ class Perceptron:
         self.e = []
 
         for _ in range(self.epochs):
-            e = 0
-            # Iterating through every training sample row after row
+            number_of_mismatches = 0
+            # Iterating through every training sample row after row; weights are updated every sample
             for x_i, target in zip(X, y):
                 update = self.learning_rate * (target - self.predict(x_i))
                 self.w[1:] += update * x_i  # Scaling update factor by an argument value
                 self.w[0] += update
-                e += 1 if update != 0.0 else 0
-            self.e.append(e)
+                number_of_mismatches += 1 if update != 0.0 else 0
+            self.e.append(number_of_mismatches)
         return self
 
     def __net_input(self, X: NDArray) -> ArrayLike:

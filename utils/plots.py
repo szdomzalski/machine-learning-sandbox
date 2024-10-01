@@ -16,10 +16,12 @@ def plot_decision_regions(X: NDArray, y: NDArray, classifier: any, resolution: f
     x2_min = X[:, 1].min() - 1
     x2_max = X[:, 1].max() + 1
 
+    # Generate 2-dimensional meshgrid
     xx1, xx2 = np.meshgrid(np.arange(x1_min, x1_max, resolution), np.arange(x2_min, x2_max, resolution))
-    # xx1 and xx2 are matrices and need to be flattened to 2 columns of X matrix
+    # Matrices xx1 and xx2 need to be flattened to 2 columns of X matrix (every combination of x1 and x2
+    #   should be evaluated)
     Z = classifier.predict(np.array([xx1.ravel(), xx2.ravel()]).T)
-    # Reshaping to mesh dimensions
+    # Reshaping results from a vector to mesh dimensions for 2D plotting
     Z = Z.reshape(xx1.shape)
 
     plt.figure()
