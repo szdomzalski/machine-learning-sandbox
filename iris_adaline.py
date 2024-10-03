@@ -2,11 +2,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from utils import plots
-from models import perceptron
+from models import adaline
 
 
-DEBUG = True
+DEBUG = False
 
 ROWS_CONSIDERED = 100
 
@@ -35,6 +34,8 @@ if DEBUG:
     print(f'Type {{{type(X)}}}, shape {{{X.shape}}}')
     print(X)
 
+# Training data simple visualisation
+plt.figure()
 plt.scatter(X[:50, 0], X[:50, 1], color='red', marker='o', label='Setosa')
 plt.scatter(X[50:100, 0], X[50:100, 1], color='blue', marker='x', label='Versicolor')
 plt.xlabel('Calyx sepal length [cm]')
@@ -42,18 +43,14 @@ plt.ylabel('Petal length [cm]')
 plt.legend(loc='upper left')
 plt.show(block=False)
 
-# Training perceptron on 2-level iris dataset
-ppn = perceptron.Perceptron(learning_rate=0.1, epochs=10)
-ppn.fit(X, y)
-
-plt.figure()
-plt.plot(range(1, len(ppn.number_of_e) + 1), ppn.number_of_e, marker='o')
-plt.xlabel('Epochs')
-plt.ylabel('Number of updates')
-plt.show(block=False)
-
-plots.plot_decision_regions(X, y, classifier=ppn)
-plt.xlabel('Calyx sepal length [cm]')
-plt.ylabel('Petal length [cm]')
-plt.legend(loc='upper left')
+# Training Adaline model on 2-level iris dataset
+etas = (0.01, 0.0001,)
+scaling_functions = (np.log10, lambda x: x)
+fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(10, 4))
+for i, (eta, scaling_function) in enumerate(zip(etas, scaling_functions)):
+    model = adaline.Adaline(eta, 50).fit(X, y)
+    ax[i].plot(range(1, len(model.cost) + 1), scaling_function(model.cost), marker='o')
+    ax[i].set_xlabel('Epochs')
+    ax[i].set_ylabel('Scaled errors sum')
+    ax[i].set_title(f'Adaline - learning rate {eta:.5f}')
 plt.show()

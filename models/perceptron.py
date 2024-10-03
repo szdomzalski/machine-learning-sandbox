@@ -1,5 +1,5 @@
 import numpy as np
-from numpy.typing import ArrayLike, NDArray
+from numpy.typing import NDArray
 from typing import Self
 
 
@@ -19,14 +19,19 @@ class Perceptron:
         self.epochs = epochs
         self.random_seed = random_seed
         self.w = None
-        self.e = None
+        self.number_of_e = None
 
-    def fit(self, X: NDArray, y: ArrayLike) -> Self:
-        """Fitting training data"""
+    def fit(self, X: NDArray, y: NDArray) -> Self:
+        '''Fitting model using training data
+        Arguments:
+        X - NxM matrix where there is N samples and M input traits
+        y - Nx1 vector where there is N samples and 1 output trait
+        '''
         random_generator = np.random.RandomState(self.random_seed)
-        # Initializing weights vector (size m+1 where m is number of features); scale is standard deviation
+        # Initializing weights vector (column type, size m+1 where m is number of features); scale is standard deviation
         self.w = random_generator.normal(loc=0.0, scale=0.01, size=(1 + X.shape[self.COLUMNS_IDX]))
-        self.e = []
+        # print(f'Weights vector w shape: {{{self.w.shape}}}')
+        self.number_of_e = []
 
         for _ in range(self.epochs):
             number_of_mismatches = 0
@@ -36,13 +41,21 @@ class Perceptron:
                 self.w[1:] += update * x_i  # Scaling update factor by an argument value
                 self.w[0] += update
                 number_of_mismatches += 1 if update != 0.0 else 0
-            self.e.append(number_of_mismatches)
+            self.number_of_e.append(number_of_mismatches)
         return self
 
-    def __net_input(self, X: NDArray) -> ArrayLike:
-        """Calculating overall input z, unit bias included"""
+    def _net_input(self, X: NDArray) -> NDArray:
+        """Calculating overall input z, unit bias included
+        Arguments:
+        X - NxM vector where there is N samples and M input traits
+        Return:
+        z - Nx1 vector where there is N samples and 1 output trait"""
         return np.dot(X, self.w[1:]) + self.w[0]
 
     def predict(self, X: NDArray) -> NDArray:
-        """Returning classification afer calculating Heavyside function"""
-        return np.where(self.__net_input(X) >= 0.0, 1, -1)
+        """Returning classification afer calculating Heavyside function
+        Arguments:
+        X - NxM matrix where there is N samples and M input traits
+        Return:
+        y - Nx1 vector where there is N samples and 1 output trait"""
+        return np.where(self._net_input(X) >= 0.0, 1, -1)
