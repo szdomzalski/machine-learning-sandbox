@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 
 from models import adaline
+from utils.plots import plot_decision_regions
 
 
 DEBUG = False
@@ -53,4 +54,26 @@ for i, (eta, scaling_function) in enumerate(zip(etas, scaling_functions)):
     ax[i].set_xlabel('Epochs')
     ax[i].set_ylabel('Scaled errors sum')
     ax[i].set_title(f'Adaline - learning rate {eta:.5f}')
+plt.show(block=False)
+
+# Standardization of matrix X
+X_std = np.copy(X)
+X_std[:, 0] = (X[:, 0] - X[:, 0].mean()) / X[:, 0].std()
+X_std[:, 1] = (X[:, 1] - X[:, 1].mean()) / X[:, 1].std()
+
+model = adaline.Adaline(learning_rate=0.01, epochs=15)
+model.fit(X_std, y)
+
+plot_decision_regions(X_std, y, classifier=model)
+plt.title('Adaline - gradient descent')
+plt.xlabel('Calyx sepal length [cm]')
+plt.ylabel('Petal length [cm]')
+plt.legend(loc='upper left')
+plt.tight_layout()
+plt.show(block=False)
+
+plt.figure()
+plt.plot(range(1, len(model.cost) + 1), model.cost, marker='o')
+plt.xlabel('Epochs')
+plt.ylabel('Sum of squared errors')
 plt.show()
