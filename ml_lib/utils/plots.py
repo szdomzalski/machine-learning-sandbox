@@ -5,7 +5,8 @@ from numpy.typing import NDArray
 
 
 # For 2 dimensional plots
-def plot_decision_regions(X: NDArray, y: NDArray, classifier: any, resolution: float = 0.02) -> None:
+def plot_decision_regions(X: NDArray, y: NDArray, classifier: any, resolution: float = 0.02,
+                          test_idx: list | None = None) -> None:
     markers = ('s', 'x', 'o', '^', 'v')
     colors = ('red', 'blue', 'lightgreen', 'gray', 'cyan')
     color_map = ListedColormap(colors[:len(np.unique(y))])
@@ -31,4 +32,12 @@ def plot_decision_regions(X: NDArray, y: NDArray, classifier: any, resolution: f
 
     for i, class_label in enumerate(np.unique(y)):
         plt.scatter(X[y == class_label, 0], X[y == class_label, 1], alpha=0.8, c=colors[i], marker=markers[i],
-                    label=class_label, edgecolors='black')
+                    label=class_label, edgecolors='none')
+
+    # Marking test samples
+    if test_idx is not None:
+        # Plot all test samples
+        X_test = X[test_idx, :]
+
+        plt.scatter(X_test[:, 0], X_test[:, 1], c='none', alpha=1.0, linewidths=1, marker='o',
+                    edgecolor='black', s=100, label='Test subset')
