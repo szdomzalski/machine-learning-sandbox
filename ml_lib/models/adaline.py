@@ -1,5 +1,4 @@
 import numpy as np
-from numpy.random import seed
 from numpy.typing import NDArray
 from typing import Self
 
@@ -14,8 +13,8 @@ class AdalineGD(perceptron.Perceptron):
     random_seed - seed for random generator
     '''
 
-    def __init__(self, learning_rate: float = 0.01, epochs: int = 50, random_seed: int = 1) -> None:
-        super().__init__(learning_rate, epochs, random_seed)
+    def __init__(self, eta: float = 0.01, epochs: int = 50, random_seed: int = 1) -> None:
+        super().__init__(eta, epochs, random_seed)
         self.cost = None
 
     def fit(self, X: NDArray, y: NDArray) -> Self:
@@ -36,9 +35,9 @@ class AdalineGD(perceptron.Perceptron):
             activation_output = self._activation(net_input)
             e = np.array(y - activation_output, dtype=np.float64)  # Somehow dtype was changed if simply subtracted
             # Vector w will be column vector of size Mx1
-            self.w[1:] += self.learning_rate * X.T.dot(e)
+            self.w[1:] += self.eta * X.T.dot(e)
             # Sum of errors is simply used as bias is technically ones vector
-            self.w[0] += self.learning_rate * e.sum()
+            self.w[0] += self.eta * e.sum()
 
             # This is tricky, numpy vector e to the power of 2 is element-wise operation, [e1**2 e2**2 ... eN**2]
             cost = (e**2).sum() / 2.0
@@ -46,9 +45,9 @@ class AdalineGD(perceptron.Perceptron):
 
         return self
 
-    def _activation(self, x: NDArray) -> NDArray:
+    def _activation(self, z: NDArray) -> NDArray:
         '''Calculating linear activation function'''
-        return x
+        return z
 
     def predict(self, X: NDArray) -> NDArray:
         """Returning classification afer calculating Heavyside function
@@ -67,8 +66,8 @@ class AdalineSGD(AdalineGD):
     random_seed - seed for random generator
     '''
 
-    def __init__(self, learning_rate: float = 0.01, epochs: int = 50, random_seed: int = 1) -> None:
-        super().__init__(learning_rate, epochs, random_seed)
+    def __init__(self, eta: float = 0.01, epochs: int = 50, random_seed: int = 1) -> None:
+        super().__init__(eta, epochs, random_seed)
         self.w_initialized = False
         self.random_generator = None
 
@@ -127,7 +126,7 @@ class AdalineSGD(AdalineGD):
         z = self._net_input(x_i)  # this is a scalar as x_i is row vector
         activation_output = self._activation(z)
         e = y_i - activation_output  # this is a scalar as well
-        self.w[1:] += self.learning_rate * x_i.dot(e)
-        self.w[0] += self.learning_rate * e
+        self.w[1:] += self.eta * x_i.dot(e)
+        self.w[0] += self.eta * e
         cost = 0.5 * (e ** 2)
         return cost

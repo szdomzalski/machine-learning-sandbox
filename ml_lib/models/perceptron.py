@@ -14,8 +14,8 @@ class Perceptron:
     ROW_IDX = 0
     COLUMNS_IDX = 1
 
-    def __init__(self, learning_rate: float = 0.01, epochs: int = 50, random_seed: int = 1) -> None:
-        self.learning_rate = learning_rate
+    def __init__(self, eta: float = 0.01, epochs: int = 50, random_seed: int = 1) -> None:
+        self.eta = eta
         self.epochs = epochs
         self.random_seed = random_seed
         self.w = None
@@ -37,7 +37,7 @@ class Perceptron:
             number_of_mismatches = 0
             # Iterating through every training sample row after row; weights are updated every sample
             for x_i, target in zip(X, y):
-                update = self.learning_rate * (target - self.predict(x_i))
+                update = self.eta * (target - self.predict(x_i))
                 self.w[1:] += update * x_i  # Scaling update factor by an argument value
                 self.w[0] += update
                 number_of_mismatches += 1 if update != 0.0 else 0

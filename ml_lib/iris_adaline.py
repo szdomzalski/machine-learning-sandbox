@@ -62,7 +62,7 @@ def main():
     X_std[:, 0] = (X[:, 0] - X[:, 0].mean()) / X[:, 0].std()
     X_std[:, 1] = (X[:, 1] - X[:, 1].mean()) / X[:, 1].std()
 
-    model = adaline.AdalineGD(learning_rate=0.01, epochs=15)
+    model = adaline.AdalineGD(eta=0.01, epochs=15)
     model.fit(X_std, y)
 
     plot_decision_regions(X_std, y, classifier=model)
@@ -79,7 +79,7 @@ def main():
     plt.ylabel('Sum of squared errors')
     plt.show(block=False)
 
-    model = adaline.AdalineSGD(learning_rate=0.01, epochs=15)
+    model = adaline.AdalineSGD(eta=0.01, epochs=15)
     model.fit(X_std, y)
     model.partial_fit(X_std[0:1, :], y[0:1])
 
