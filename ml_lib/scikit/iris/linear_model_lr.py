@@ -43,4 +43,10 @@ def main():
     plt.ylabel('Petal width [standardized]')
     plt.xlabel('Petal length [standardized]')
     plt.legend(loc='upper left')
-    plt.show()
+    plt.show(block=False)
+
+    probability_predicted = model.predict_proba(X_test_std[:3, :])
+    print(f'Predicted probability for 1st 3 samples:\n{probability_predicted}')
+    print(f'Summing probability check:\n{probability_predicted.sum(axis=1)}')
+    print(f'Highest probability column for each sample:\n{probability_predicted.argmax(axis=1)}')
+    print(f'Comparison with predict method:\n{model.predict(X_test_std[:3, :])}')
