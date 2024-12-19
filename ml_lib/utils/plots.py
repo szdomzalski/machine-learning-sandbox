@@ -32,7 +32,7 @@ def plot_decision_regions(X: NDArray, y: NDArray, classifier: any, resolution: f
 
     for i, class_label in enumerate(np.unique(y)):
         plt.scatter(X[y == class_label, 0], X[y == class_label, 1], alpha=0.8, c=colors[i], marker=markers[i],
-                    label=class_label, edgecolors='none')
+                    label=class_label, edgecolors='black')
 
     # Marking test samples
     if test_idx is not None:

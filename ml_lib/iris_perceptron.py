@@ -44,7 +44,7 @@ def main():
     plt.show(block=False)
 
     # Training perceptron on 2-level iris dataset
-    ppn = perceptron.Perceptron(learning_rate=0.1, epochs=10)
+    ppn = perceptron.Perceptron(eta=0.1, epochs=10)
     ppn.fit(X, y)
 
     plt.figure()
