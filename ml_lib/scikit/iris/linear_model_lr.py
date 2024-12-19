@@ -26,6 +26,7 @@ def main():
     X_train_std = std_scaler.transform(X_train)
     X_test_std = std_scaler.transform(X_test)
 
+    # C is inverse of lambda, lower C means stronger regularization
     model = linear_model.LogisticRegression(C=1000.0, random_state=1)
     model.fit(X_train_std, y_train)
 
@@ -50,3 +51,20 @@ def main():
     print(f'Summing probability check:\n{probability_predicted.sum(axis=1)}')
     print(f'Highest probability column for each sample:\n{probability_predicted.argmax(axis=1)}')
     print(f'Comparison with predict method:\n{model.predict(X_test_std[:3, :])}')
+
+    weights, params = [], []
+    for c in np.arange(-5, 5):
+        model = linear_model.LogisticRegression(C=10.0 ** c, random_state=1)
+        model.fit(X_train_std, y_train)
+        weights.append(model.coef_[1])
+        params.append(10.0 ** c)
+    weights = np.array(weights)
+
+    plt.figure()
+    plt.plot(params, weights[:, 0], label='Petal length')
+    plt.plot(params, weights[:, 1], label='Petal width')
+    plt.ylabel('Weights coefficient')
+    plt.xlabel('C')
+    plt.legend(loc='upper left')
+    plt.xscale('log')
+    plt.show()
