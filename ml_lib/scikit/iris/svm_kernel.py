@@ -7,6 +7,7 @@ from ml_lib.utils.plots import plot_decision_regions
 
 
 def main():
+    # XOR experiment
     np.random.seed(1)
     X_xor = np.random.randn(200, 2)
     y_xor = np.logical_xor(X_xor[:, 0] > 0, X_xor[:, 1] > 0)
@@ -20,6 +21,7 @@ def main():
     plt.legend(loc='best')
     plt.show(block=False)
 
+    # Test lower gamma
     model = SVC(kernel='rbf', C=10.0, random_state=1, gamma=0.1)
     model.fit(X_xor, y_xor)
 
@@ -29,11 +31,12 @@ def main():
     plt.legend(loc='upper left')
     plt.show(block=False)
 
-    model = SVC(kernel='rbf', C=10.0, random_state=1, gamma=0.2)
+    # Test greater gamma
+    model = SVC(kernel='rbf', C=10.0, random_state=1, gamma=10.0)
     model.fit(X_xor, y_xor)
 
     plot_decision_regions(X_xor, y_xor, classifier=model)
-    plt.title('gamma = 0.2')
+    plt.title('gamma = 10')
     plt.legend(loc='upper left')
     plt.show(block=False)
 
@@ -55,11 +58,25 @@ def main():
     X_combined_std = np.vstack((X_train_std, X_test_std))
     y_combined = np.hstack((y_train, y_test))
 
+    # Low gamma
     model = SVC(kernel='rbf', C=1.0, random_state=1, gamma=0.2)
     model.fit(X_train_std, y_train)
 
     plot_decision_regions(X_combined_std, y_combined, classifier=model, test_idx=range(105, 150))
 
+    plt.title('Gamma 0.2')
+    plt.ylabel('Petal width [standardized]')
+    plt.xlabel('Petal length [standardized]')
+    plt.legend(loc='upper left')
+    plt.show(block=False)
+
+    # Greater gamma
+    model = SVC(kernel='rbf', C=1.0, random_state=1, gamma=100.0)
+    model.fit(X_train_std, y_train)
+
+    plot_decision_regions(X_combined_std, y_combined, classifier=model, test_idx=range(105, 150))
+
+    plt.title('Gamma 100')
     plt.ylabel('Petal width [standardized]')
     plt.xlabel('Petal length [standardized]')
     plt.legend(loc='upper left')
