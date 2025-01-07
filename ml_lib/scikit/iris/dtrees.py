@@ -1,5 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from sklearn import datasets, model_selection, preprocessing
+from sklearn.tree import DecisionTreeClassifier
+
+from ml_lib.utils.plots import plot_decision_regions
 
 
 def gini(p: float) -> float:
@@ -14,7 +18,7 @@ def classification_error(p: float) -> float:
     return 1 - np.max([p, 1 - p])
 
 
-def main():
+def test_impurity_measures() -> None:
     x = np.arange(0.0, 1.0, 0.01)
     entropy_values = [entropy(p) if p != 0.0 else None for p in x]
     scaled_entropy = [e * 0.5 if e else None for e in entropy_values]
@@ -32,4 +36,38 @@ def main():
     plt.ylim([0, 1.1])
     plt.xlabel('p')
     plt.ylabel('Impurity measure')
-    plt.show()
+    plt.show(block=False)
+
+
+def train_simple_tree(*, min_depth: int = 1, max_depth: int = 6) -> None:
+    iris = datasets.load_iris()
+
+    X = iris.data[:, [2, 3]]
+    y = iris.target
+
+    print('Class labels:', np.unique(y))
+
+    X_train, X_test, y_train, y_test = model_selection.train_test_split(X, y, test_size=0.3, random_state=1, stratify=y)
+
+    X_combined = np.vstack((X_train, X_test))
+    y_combined = np.hstack((y_train, y_test))
+
+    block = False
+    for depth in range(min_depth, max_depth):
+        if depth >= max_depth - 1:
+            block = True
+
+        model = DecisionTreeClassifier(criterion='gini', max_depth=depth, random_state=1)
+        model.fit(X_train, y_train)
+
+        plot_decision_regions(X_combined, y_combined, model, test_idx=range(105, 150))
+        plt.title(f'D-tree depth: {depth}')
+        plt.ylabel('Petal width [standardized]')
+        plt.xlabel('Petal length [standardized]')
+        plt.legend(loc='upper left')
+        plt.show(block=block)
+
+
+def main():
+    # test_impurity_measures()
+    train_simple_tree(min_depth=3, max_depth=10)
