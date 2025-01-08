@@ -1,7 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn import datasets, model_selection, preprocessing
-from sklearn.tree import DecisionTreeClassifier
+import os
+from pydotplus import graph_from_dot_data
+from sklearn import datasets, model_selection
+from sklearn.tree import DecisionTreeClassifier, export_graphviz
 
 from ml_lib.utils.plots import plot_decision_regions
 
@@ -16,6 +18,15 @@ def entropy(p: float) -> float:
 
 def classification_error(p: float) -> float:
     return 1 - np.max([p, 1 - p])
+
+
+def export_dtree(tree_model, class_names: list[str], feature_names: list[str], out_file: str | None = None,
+                 tree_name: str = 'tree.png') -> None:
+    os.makedirs(os.path.dirname(tree_name), exist_ok=True)
+    dot_data = export_graphviz(tree_model, filled=True, rounded=True, class_names=class_names,
+                               feature_names=feature_names, out_file=out_file)
+    graph = graph_from_dot_data(dot_data)
+    graph.write_png(tree_name)
 
 
 def test_impurity_measures() -> None:
@@ -60,6 +71,9 @@ def train_simple_tree(*, min_depth: int = 1, max_depth: int = 6) -> None:
         model = DecisionTreeClassifier(criterion='gini', max_depth=depth, random_state=1)
         model.fit(X_train, y_train)
 
+        export_dtree(model, ['Setosa', 'Versicolor', 'Virginica'], ['Petal length', 'Petal width'],
+                     tree_name=f'trees/tree{depth:02}.png')
+
         plot_decision_regions(X_combined, y_combined, model, test_idx=range(105, 150))
         plt.title(f'D-tree depth: {depth}')
         plt.ylabel('Petal width [standardized]')
@@ -70,4 +84,5 @@ def train_simple_tree(*, min_depth: int = 1, max_depth: int = 6) -> None:
 
 def main():
     # test_impurity_measures()
-    train_simple_tree(min_depth=3, max_depth=10)
+    # train_simple_tree(min_depth=3, max_depth=10)
+    train_simple_tree(min_depth=3, max_depth=5)
