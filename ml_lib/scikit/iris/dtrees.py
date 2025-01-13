@@ -2,9 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 from pydotplus import graph_from_dot_data
-from sklearn import datasets, model_selection
 from sklearn.tree import DecisionTreeClassifier, export_graphviz
 
+from ml_lib.scikit.iris import provide_data
 from ml_lib.utils.plots import plot_decision_regions
 
 
@@ -51,17 +51,7 @@ def test_impurity_measures() -> None:
 
 
 def train_simple_tree(*, min_depth: int = 1, max_depth: int = 6) -> None:
-    iris = datasets.load_iris()
-
-    X = iris.data[:, [2, 3]]
-    y = iris.target
-
-    print('Class labels:', np.unique(y))
-
-    X_train, X_test, y_train, y_test = model_selection.train_test_split(X, y, test_size=0.3, random_state=1, stratify=y)
-
-    X_combined = np.vstack((X_train, X_test))
-    y_combined = np.hstack((y_train, y_test))
+    X_train, y_train, X_combined, y_combined = provide_data()
 
     block = False
     for depth in range(min_depth, max_depth):
@@ -84,5 +74,4 @@ def train_simple_tree(*, min_depth: int = 1, max_depth: int = 6) -> None:
 
 def main():
     # test_impurity_measures()
-    # train_simple_tree(min_depth=3, max_depth=10)
     train_simple_tree(min_depth=3, max_depth=5)

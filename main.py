@@ -4,5 +4,7 @@
 # from ml_lib.scikit.iris import svm
 # from ml_lib.scikit.iris import svm_kernel
 from ml_lib.scikit.iris import dtrees
+# from ml_lib.scikit.iris import random_forest
 
 dtrees.main()
+# random_forest.main()
